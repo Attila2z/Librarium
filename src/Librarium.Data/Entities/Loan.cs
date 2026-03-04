@@ -14,4 +14,6 @@ public class Loan
     public DateTimeOffset LoanDate { get; set; }
 
     public DateTimeOffset? ReturnDate { get; set; }
+
+    public LoanStatus Status { get; set; }
 }

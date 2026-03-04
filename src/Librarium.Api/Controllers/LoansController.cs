@@ -46,7 +46,8 @@ public class LoansController : ControllerBase
             loanId = l.Id,
             bookTitle = l.Book.Title,
             l.LoanDate,
-            l.ReturnDate
+            l.ReturnDate,
+            status = l.Status.ToString()
         }));
     }
 }

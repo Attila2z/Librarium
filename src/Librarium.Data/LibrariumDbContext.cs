@@ -39,6 +39,7 @@ public class LibrariumDbContext : DbContext
         {
             entity.Property(l => l.LoanDate).IsRequired();
             entity.Property(l => l.ReturnDate).IsRequired(false);
+            entity.Property(l => l.Status).IsRequired().HasDefaultValue(LoanStatus.Active);
 
             entity.HasIndex(l => l.MemberId); // supports GET /api/loans/{memberId}
             entity.HasIndex(l => l.BookId);
