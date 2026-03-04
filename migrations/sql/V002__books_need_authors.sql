@@ -44,4 +44,3 @@ INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
 VALUES ('20260304121802_V002_BooksNeedAuthors', '10.0.3');
 
 COMMIT;
-

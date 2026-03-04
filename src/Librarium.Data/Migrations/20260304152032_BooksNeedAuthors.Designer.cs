@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Librarium.Data.Migrations
 {
     [DbContext(typeof(LibrariumDbContext))]
-    [Migration("20260304143757_V003_AddMemberPhoneNumber")]
-    partial class V003_AddMemberPhoneNumber
+    [Migration("20260304152032_BooksNeedAuthors")]
+    partial class BooksNeedAuthors
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
