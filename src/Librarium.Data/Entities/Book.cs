@@ -13,5 +13,7 @@ public class Book
     public int PublicationYear {get; set;}
     public List<Loan> Loans {get; set;} = new();
 
+    public List<Author> Authors  {get; set;} = new();
+
 }
 

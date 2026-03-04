@@ -17,14 +17,26 @@ public class BooksController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetBooks()
+{
+    var books = await _db.Books
+        .AsNoTracking()
+        .Include(b => b.Authors)
+        .ToListAsync();
+
+    return Ok(books.Select(b => new
     {
-        var books = await _db.Books.ToListAsync();
-        return Ok(books.Select(b => new
+        bookId = b.Id,
+        title = b.Title,
+        isbn = b.Isbn,
+        publicationYear = b.PublicationYear,
+
+        // NEW
+        authors = b.Authors.Select(a => new
         {
-            bookId = b.Id,
-            b.Title,
-            isbn = b.Isbn,
-            b.PublicationYear
-        }));
+            firstName = a.FirstName,
+            lastName = a.LastName,
+            biography = a.Biography
+        }).ToList()
+    }));
     }
 }
