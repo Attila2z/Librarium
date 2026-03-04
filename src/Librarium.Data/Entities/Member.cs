@@ -8,6 +8,8 @@ public class Member
     public required string LastName { get; set; }
     public required string Email { get; set; }
 
+    public string? PhoneNumber { get; set; }
+
     // Navigation: a member can have many loans
     public List<Loan> Loans { get; set; } = new();
 }
