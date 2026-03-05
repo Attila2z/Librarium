@@ -25,19 +25,19 @@ CREATE INDEX "IX_AuthorBook_BooksId" ON "AuthorBook" ("BooksId");
 
 
 -- Backfill: create Unknown Author once
-INSERT INTO "Authors" ("FirstName", "LastName", "Biography")
+INSERT INTO "Author" ("FirstName", "LastName", "Biography")
 SELECT 'Unknown', 'Author', 'Auto-created during V002 migration to satisfy required author relationship'
 WHERE NOT EXISTS (
-  SELECT 1 FROM "Authors" WHERE "FirstName"='Unknown' AND "LastName"='Author'
+  SELECT 1 FROM "Author" WHERE "FirstName"='Unknown' AND "LastName"='Author'
 );
 
 -- Backfill: attach Unknown Author to all books without any author
-INSERT INTO "BookAuthors" ("BookId", "AuthorId")
-SELECT b."Id", a."Id"
+INSERT INTO "AuthorBook" ("AuthorsId", "BooksId")
+SELECT a."Id", b."Id"
 FROM "Books" b
-JOIN "Authors" a ON a."FirstName"='Unknown' AND a."LastName"='Author'
+JOIN "Author" a ON a."FirstName"='Unknown' AND a."LastName"='Author'
 WHERE NOT EXISTS (
-  SELECT 1 FROM "BookAuthors" ba WHERE ba."BookId" = b."Id"
+  SELECT 1 FROM "AuthorBook" ba WHERE ba."BooksId" = b."Id"
 );
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")

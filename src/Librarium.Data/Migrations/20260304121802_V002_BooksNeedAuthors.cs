@@ -54,6 +54,24 @@ namespace Librarium.Data.Migrations
                 name: "IX_AuthorBook_BooksId",
                 table: "AuthorBook",
                 column: "BooksId");
+
+            // Backfill: create Unknown Author once
+            migrationBuilder.Sql(
+                @"INSERT INTO ""Author"" (""FirstName"", ""LastName"", ""Biography"")
+                  SELECT 'Unknown', 'Author', 'Auto-created during V002 migration to satisfy required author relationship'
+                  WHERE NOT EXISTS (
+                    SELECT 1 FROM ""Author"" WHERE ""FirstName""='Unknown' AND ""LastName""='Author'
+                  )");
+
+            // Backfill: attach Unknown Author to all books without any author
+            migrationBuilder.Sql(
+                @"INSERT INTO ""AuthorBook"" (""AuthorsId"", ""BooksId"")
+                  SELECT a.""Id"", b.""Id""
+                  FROM ""Books"" b
+                  JOIN ""Author"" a ON a.""FirstName""='Unknown' AND a.""LastName""='Author'
+                  WHERE NOT EXISTS (
+                    SELECT 1 FROM ""AuthorBook"" ba WHERE ba.""BooksId"" = b.""Id""
+                  )");
         }
 
         /// <inheritdoc />
