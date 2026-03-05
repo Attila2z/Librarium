@@ -20,6 +20,7 @@ public class LibrariumDbContext : DbContext
         {
             entity.Property(b => b.Title).HasMaxLength(256).IsRequired();
             entity.Property(b => b.Isbn).HasMaxLength(20).IsRequired();
+            entity.Property(b => b.IsRetired).IsRequired().HasDefaultValue(false);
 
             entity.HasIndex(b => b.Isbn).IsUnique();
         });
