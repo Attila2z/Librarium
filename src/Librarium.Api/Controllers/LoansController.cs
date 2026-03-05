@@ -44,7 +44,12 @@ public class LoansController : ControllerBase
         return Ok(loans.Select(l => new
         {
             loanId = l.Id,
-            bookTitle = l.Book.Title,
+            book = l.Book == null ? null : new
+            {
+                bookId = l.Book.Id,
+                title = l.Book.Title,
+                isRetired = l.Book.IsRetired
+            },
             l.LoanDate,
             l.ReturnDate,
             status = l.Status.ToString()

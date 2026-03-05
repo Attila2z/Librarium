@@ -20,6 +20,7 @@ public class BooksController : ControllerBase
 {
     var books = await _db.Books
         .AsNoTracking()
+        .Where(b => !b.IsRetired)
         .Include(b => b.Authors)
         .ToListAsync();
 
