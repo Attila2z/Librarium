@@ -24,14 +24,12 @@ CREATE TABLE "AuthorBook" (
 CREATE INDEX "IX_AuthorBook_BooksId" ON "AuthorBook" ("BooksId");
 
 
--- Backfill: create Unknown Author once
 INSERT INTO "Author" ("FirstName", "LastName", "Biography")
 SELECT 'Unknown', 'Author', 'Auto-created during V002 migration to satisfy required author relationship'
 WHERE NOT EXISTS (
   SELECT 1 FROM "Author" WHERE "FirstName"='Unknown' AND "LastName"='Author'
 );
 
--- Backfill: attach Unknown Author to all books without any author
 INSERT INTO "AuthorBook" ("AuthorsId", "BooksId")
 SELECT a."Id", b."Id"
 FROM "Books" b
