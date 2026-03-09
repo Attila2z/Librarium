@@ -31,7 +31,7 @@ public class LibrariumDbContext : DbContext
             entity.Property(m => m.FirstName).HasMaxLength(100).IsRequired();
             entity.Property(m => m.LastName).HasMaxLength(100).IsRequired();
             entity.Property(m => m.Email).HasMaxLength(320).IsRequired();
-
+            entity.Property(m => m.PhoneNumber).HasMaxLength(30);
             entity.HasIndex(m => m.Email).IsUnique();
         });
 
@@ -58,7 +58,7 @@ public class LibrariumDbContext : DbContext
         // AUTHOR
         modelBuilder.Entity<Author>(entity =>
         {
-            entity.ToTable("Authors");
+            entity.ToTable("Author");
             entity.Property(a => a.FirstName).HasMaxLength(100).IsRequired();
             entity.Property(a => a.LastName).HasMaxLength(100).IsRequired();
             entity.Property(a => a.Biography);
