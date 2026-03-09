@@ -55,5 +55,14 @@ public class LibrariumDbContext : DbContext
                 .HasForeignKey(l => l.BookId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
+        // AUTHOR
+        modelBuilder.Entity<Author>(entity =>
+        {
+            entity.ToTable("Authors");
+            entity.Property(a => a.FirstName).HasMaxLength(100).IsRequired();
+            entity.Property(a => a.LastName).HasMaxLength(100).IsRequired();
+            entity.Property(a => a.Biography);
+     
+        });
     }
 }
