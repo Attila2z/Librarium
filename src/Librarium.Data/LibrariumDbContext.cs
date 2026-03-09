@@ -10,6 +10,7 @@ public class LibrariumDbContext : DbContext
     public DbSet<Book> Books => Set<Book>();
     public DbSet<Member> Members => Set<Member>();
     public DbSet<Loan> Loans => Set<Loan>();
+    public DbSet<Author> Authors => Set<Author>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,7 +20,7 @@ public class LibrariumDbContext : DbContext
         modelBuilder.Entity<Book>(entity =>
         {
             entity.Property(b => b.Title).HasMaxLength(256).IsRequired();
-            entity.Property(b => b.Isbn).HasMaxLength(20);
+            entity.Property(b => b.Isbn).HasMaxLength(20).IsRequired(false);
             entity.Property(b => b.IsRetired).IsRequired().HasDefaultValue(false);
 
             entity.HasIndex(b => b.Isbn).IsUnique();
@@ -31,7 +32,7 @@ public class LibrariumDbContext : DbContext
             entity.Property(m => m.FirstName).HasMaxLength(100).IsRequired();
             entity.Property(m => m.LastName).HasMaxLength(100).IsRequired();
             entity.Property(m => m.Email).HasMaxLength(320).IsRequired();
-            entity.Property(m => m.PhoneNumber).HasMaxLength(30);
+            entity.Property(m => m.PhoneNumber);
             entity.HasIndex(m => m.Email).IsUnique();
         });
 
@@ -59,10 +60,9 @@ public class LibrariumDbContext : DbContext
         modelBuilder.Entity<Author>(entity =>
         {
             entity.ToTable("Author");
-            entity.Property(a => a.FirstName).HasMaxLength(100).IsRequired();
-            entity.Property(a => a.LastName).HasMaxLength(100).IsRequired();
+            entity.Property(a => a.FirstName).IsRequired();
+            entity.Property(a => a.LastName).IsRequired();
             entity.Property(a => a.Biography);
-
         });
     }
 }

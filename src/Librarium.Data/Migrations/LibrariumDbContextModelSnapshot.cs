@@ -58,7 +58,7 @@ namespace Librarium.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Author");
+                    b.ToTable("Author", (string)null);
                 });
 
             modelBuilder.Entity("Librarium.Data.Entities.Book", b =>
@@ -75,7 +75,6 @@ namespace Librarium.Data.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<string>("Isbn")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
