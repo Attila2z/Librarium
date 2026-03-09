@@ -30,8 +30,6 @@ public class BooksController : ControllerBase
         title = b.Title,
         isbn = b.Isbn,
         publicationYear = b.PublicationYear,
-
-        // NEW
         authors = b.Authors.Select(a => new
         {
             firstName = a.FirstName,
