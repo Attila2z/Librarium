@@ -1,3 +1,19 @@
+## V001 - Initial Schema
+
+The initial schema establishes the foundational tables: Books, Members, and Loans required to support a library management platform.
+
+**Type of change:** Additive (non-breaking)
+
+**API impact:**
+Four new endpoints are introduced: GET /api/books, GET /api/members, POST /api/loans, and GET /api/loans/{memberId}. No existing API contract exists to break.
+
+**Deployment notes:**
+Initial schema migration applied when bootstrapping teh system. Both code and schema deploy simultaneosly.
+
+**Decisions and tradeoffs:**
+The schema enforces critical constraints at teh database level: unique constraints on ISBN and Email, and ON DELETE RESTRICT for loans to preserve audit history. This trades flexibility for confidence - books and members with loans cannot be deleted, preventing accidental data loss. Validation at the database boundary ensures these garantees apply regardless of application bugs or future code changes.
+
+
 ## V002 — Books Need Authors
 
 **Type of change:** Additive (potentially breaking)
@@ -66,3 +82,51 @@ database level and enforce the "mandatory" constraint in the application
 layer for new registrations only. This is a deliberate tradeoff: the 
 database is slightly more permissive than the business rule, but it avoids 
 polluting existing records with fake placeholder data.
+
+
+## V004 - Loans Need Status
+
+The loan workflow becomes more explicit by introducing a Status column to Loans. Previosly, loan state was inferred from ReturnDate; now Status (Active, Returned, Overdue, Lost) explicitly tracks state.
+
+**Type of change:** Additive (potentially breaking)
+
+**API impact:**
+GET /api/loans/{memberId} includes a new status field alongside bookTitle, loanDate, and returnDate. The old fields are preserved for backward compatibility. The shift from implicit to explicit state could be breaking if clients relied on returnDate logic.
+
+**Deployment notes:**
+The migration must be applied before the new API code deploys. During transition, the old code continues inferring state from ReturnDate - nothing breaks.
+
+**Decisions and tradeoffs:**
+Existing loans were populated automaticaly: null ReturnDate becomes Active, otherwise Returned. This derives historical state from existing data without manual backfill. The tradeoff is that Overdue and Lost cannot be distinguished for historical loans. Backwards compatibility in the API response delays the breaking change until a future version.
+
+
+## V005 - Books Can Be Retired
+
+An IsRetired boolean column is added to Books to suport marking books as retired from the catalogue while preserving loan history for auditing.
+
+**Type of change:** Additive (non-breaking)
+
+**API impact:**
+GET /api/books response structure remains unchanged. Retired books (IsRetired = true) are filtered out, so existing clients receive a shorter list without format changes.
+
+**Deployment notes:**
+The migration must be applied before the new API code deploys. During transition, the old code returns all books; the new code filters retired ones. No data loss occurs.
+
+**Decisions and tradeoffs:**
+A developer proposed using an `IsDeleted` flag with a WHERE clause filter. This approach was reviewed and refined: the column was renamed to `IsRetired` for semantic clarity (books are retired, not deleted), and filtering occurs at the API layer to prevent null book references in loan responses. IsRetired was implemented as a boolean flag rather than a status field for simplicity - the requierment asked only for retired or in-circulation states. Loan history is preserved automaticaly via ON DELETE RESTRICT. The tradeoff is that circulation counts require checking IsRetired in the application rather than the database.
+
+
+## V006 - ISBN Column Type Change
+
+The ISBN column type is converted from integr to varchar to properly store formatted ISBNs. The existing integer data is truncated and irrecoverable.
+
+**Type of change:** Requires coordination
+
+**API impact:**
+GET /api/books continues to return an isbn field, but all existing books return isbn: null. This is a breaking change requiring client notification before production deployment. New books will have valid ISBNs after migration.
+
+**Deployment notes:**
+The migration must be applied before the new API code deploys. During transition, the old code queries Isbn without knowing it returns null. If ISBN is used for business logic, this is a visible breaking change that must be communicated.
+
+**Decisions and tradeoffs:**
+Three approaches were considerd: drop the column (losing audit trail), preserve old data separately, or add placeholder ISBNs. The second option was selected: create IsbnHistorical to preserve the corrupted values for auditing while allowing new data to be corect. The tradeoff is two ISBN-related columns and temporary null values in responses.
