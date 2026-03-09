@@ -21,6 +21,7 @@ Wait a few moments for the database to initialize before running the next comman
 ### Run App + Migrations
 
 ```bash
+dotnet restore
 cd src/Librarium.Data && dotnet ef database update && cd ../Librarium.Api && dotnet run
 ```
 
